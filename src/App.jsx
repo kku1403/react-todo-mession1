@@ -39,8 +39,10 @@ function App() {
         type="button"
         value="리셋"
         onClick={() => {
-          setTodos(initTodos);
-          nextId.current = initTodos.length + 1;
+          if (confirm("정말 초기화하시겠습니까?")) {
+            setTodos(initTodos);
+            nextId.current = initTodos.length + 1;
+          }
         }}
       ></input>
 
@@ -49,6 +51,17 @@ function App() {
         {todos.map((todo) => (
           <li key={todo.id}>
             {todo.id} / {todo.text}
+            {/** 삭제 */}
+            <input
+              type="button"
+              value="삭제"
+              onClick={() => {
+                const newTodos = todos.filter(
+                  (curTodo) => curTodo.id !== todo.id
+                );
+                setTodos(newTodos);
+              }}
+            ></input>
           </li>
         ))}
       </ul>
