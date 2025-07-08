@@ -34,6 +34,16 @@ function App() {
         <input type="submit" value="등록"></input>
       </form>
 
+      {/** 리셋 */}
+      <input
+        type="button"
+        value="리셋"
+        onClick={() => {
+          setTodos(initTodos);
+          nextId.current = initTodos.length + 1;
+        }}
+      ></input>
+
       {/** 조회 */}
       <ul>
         {todos.map((todo) => (
