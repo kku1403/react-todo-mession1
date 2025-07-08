@@ -3,8 +3,8 @@ import { useState, useRef } from "react";
 function App() {
   //초기 상태
   const initTodos = [
-    { id: 2, text: "TodoList 개선하기" },
-    { id: 1, text: "기술 블로그 작성하기" },
+    { id: 2, text: "TodoList 개선하기", checked: true },
+    { id: 1, text: "기술 블로그 작성하기", checked: false },
   ];
 
   //상태 선언 및 초기화
@@ -20,7 +20,7 @@ function App() {
 
           //값 가져오기
           const text = event.target.todo.value;
-          const newTodo = { id: nextId.current, text };
+          const newTodo = { id: nextId.current, text, checked: false };
 
           //상태 업그레이드
           setTodos([newTodo, ...todos]);
@@ -46,11 +46,24 @@ function App() {
         }}
       ></input>
 
-      {/** 조회 */}
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
-            {todo.id} / {todo.text}
+            {/** 완료 여부 표시 */}
+            <input
+              type="checkbox"
+              checked={todo.checked}
+              onChange={() => {
+                const newTodos = todos.map((curTodo) => {
+                  return curTodo.id === todo.id
+                    ? { ...curTodo, checked: !curTodo.checked }
+                    : curTodo;
+                });
+                setTodos(newTodos);
+              }}
+            ></input>
+            {/** 조회 */}
+            {todo.id} / {JSON.stringify(todo.checked)} / {todo.text}
             {/** 삭제 */}
             <input
               type="button"
