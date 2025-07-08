@@ -1,3 +1,7 @@
 export default function ResetTodos({ onReset }) {
-  return <button onClick={onReset}>리셋</button>;
+  return (
+    <button onClick={onReset} className="btn-reset">
+      리셋
+    </button>
+  );
 }

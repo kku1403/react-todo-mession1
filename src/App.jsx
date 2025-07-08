@@ -2,6 +2,7 @@ import AddTodo from "./components/AddTodo";
 import ResetTodos from "./components/ResetTodos";
 import TodoList from "./components/TodoList";
 import { useTodos } from "./hooks/useTodos";
+import "./App.css";
 
 function App() {
   //초기 상태
@@ -32,19 +33,27 @@ function App() {
       <ResetTodos onReset={resetTodos}></ResetTodos>
 
       {/**조회 (삭제, 수정)*/}
-      <div>진행</div>
-      <TodoList
-        todos={undoneTodos}
-        onToggle={toggleTodo}
-        onDelete={deleteTodo}
-      ></TodoList>
+      <div className="todo-container">
+        {/**진행 중 */}
+        <section className="todo-section">
+          <h2>진행</h2>
+          <TodoList
+            todos={undoneTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
+        </section>
 
-      <div>완료</div>
-      <TodoList
-        todos={doneTodos}
-        onToggle={toggleTodo}
-        onDelete={deleteTodo}
-      ></TodoList>
+        {/**완료됨 */}
+        <section className="todo-section">
+          <h2>완료</h2>
+          <TodoList
+            todos={doneTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
+        </section>
+      </div>
     </>
   );
 }

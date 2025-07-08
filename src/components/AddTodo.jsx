@@ -1,6 +1,7 @@
 export default function AddTodo({ onAdd }) {
   return (
     <form
+      className="add-todo-form"
       onSubmit={(event) => {
         event.preventDefault();
 
