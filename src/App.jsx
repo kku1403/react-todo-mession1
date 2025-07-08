@@ -19,6 +19,10 @@ function App() {
   const { todos, addTodo, resetTodos, deleteTodo, toggleTodo } =
     useTodos(initTodos);
 
+  //투두 분리
+  const undoneTodos = todos.filter((todo) => !todo.checked);
+  const doneTodos = todos.filter((todo) => todo.checked);
+
   return (
     <>
       {/** 등록 */}
@@ -28,8 +32,16 @@ function App() {
       <ResetTodos onReset={resetTodos}></ResetTodos>
 
       {/**조회 (삭제, 수정)*/}
+      <div>진행</div>
       <TodoList
-        todos={todos}
+        todos={undoneTodos}
+        onToggle={toggleTodo}
+        onDelete={deleteTodo}
+      ></TodoList>
+
+      <div>완료</div>
+      <TodoList
+        todos={doneTodos}
         onToggle={toggleTodo}
         onDelete={deleteTodo}
       ></TodoList>
