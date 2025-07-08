@@ -1,4 +1,4 @@
-export default function AddTodo({ todos, setTodos, nextId }) {
+export default function AddTodo({ onAdd }) {
   return (
     <form
       onSubmit={(event) => {
@@ -6,11 +6,9 @@ export default function AddTodo({ todos, setTodos, nextId }) {
 
         //값 가져오기
         const text = event.target.todo.value;
-        const newTodo = { id: nextId.current, text, checked: false };
 
-        //상태 업그레이드
-        setTodos([newTodo, ...todos]);
-        nextId.current++;
+        //상태 처리
+        onAdd(text);
 
         //입력 폼 초기화
         event.target.todo.value = "";
