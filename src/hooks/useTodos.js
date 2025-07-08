@@ -5,11 +5,12 @@ export function useTodos(initState) {
   const nextId = useRef(initState.length + 1);
 
   //추가
-  const addTodo = (text) => {
+  const addTodo = (text, deadline) => {
     const newTodo = {
       id: nextId.current,
       text,
       checked: false,
+      deadline,
     };
 
     setTodos([newTodo, ...todos]);
