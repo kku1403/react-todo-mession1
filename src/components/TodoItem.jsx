@@ -3,8 +3,6 @@ import { useState } from "react";
 export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   //기한을 수정 중인지에 따라 UI 달라짐 -> 상태로 표현
   const [isEditing, setIsEditing] = useState(false);
-  //임시 상태를 쓰지 않으면, 저장 누르기 전에 값이 바뀌어 버림
-  const [tempDeadline, setTempDeadline] = useState(todo.deadline || "");
 
   return (
     <li
@@ -28,21 +26,22 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           <>
             <input
               type="date"
-              value={tempDeadline}
-              onChange={(e) => setTempDeadline(e.target.value)}
+              defaultValue={todo.deadline || ""}
               className="border border-gray-300 rounded px-2 py-1"
             />
             <button
               className="ml-2 text-sm text-blue-600 hover:underline"
-              onClick={() => {
-                onEdit(todo.id, tempDeadline);
+              onClick={(e) => {
+                //previousSibling : 현재 태그의 바로 전 형제 태그
+                const newDeadline = e.target.previousSibling.value; //여기선 date값을 읽어오는 것
+                onEdit(todo.id, newDeadline);
                 setIsEditing(false);
               }}
             >
               저장
             </button>
             <button
-              className="ml-1 text-sm text-gray-600 hover:underline" // tailwind 추가
+              className="ml-1 text-sm text-gray-600 hover:underline"
               onClick={() => setIsEditing(false)}
             >
               취소
