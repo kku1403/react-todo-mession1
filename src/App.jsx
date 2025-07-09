@@ -16,8 +16,8 @@ function App() {
     },
   ];
 
-  //상태 및 관련 함수 가져오
-  const { todos, addTodo, resetTodos, deleteTodo, toggleTodo } =
+  //상태 및 관련 함수 가져오기
+  const { todos, addTodo, resetTodos, deleteTodo, toggleTodo, editTodo } =
     useTodos(initTodos);
 
   //투두 분리
@@ -41,6 +41,7 @@ function App() {
             todos={undoneTodos}
             onToggle={toggleTodo}
             onDelete={deleteTodo}
+            onEdit={editTodo}
           />
         </section>
 
@@ -51,6 +52,7 @@ function App() {
             todos={doneTodos}
             onToggle={toggleTodo}
             onDelete={deleteTodo}
+            onEdit={editTodo}
           />
         </section>
       </div>

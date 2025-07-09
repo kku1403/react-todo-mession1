@@ -1,6 +1,6 @@
 import TodoItem from "./TodoItem";
 
-export default function TodoList({ todos, onToggle, onDelete }) {
+export default function TodoList({ todos, onToggle, onDelete, onEdit }) {
   //날짜 순으로 정렬
   const sortedTodos = [...todos].sort((a, b) => {
     const aHasDeadline = !!a.deadline;
@@ -26,6 +26,7 @@ export default function TodoList({ todos, onToggle, onDelete }) {
           todo={todo}
           onToggle={onToggle}
           onDelete={onDelete}
+          onEdit={onEdit}
         ></TodoItem>
       ))}
     </ul>

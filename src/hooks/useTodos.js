@@ -47,5 +47,14 @@ export function useTodos(initState) {
     );
   };
 
-  return { todos, addTodo, resetTodos, deleteTodo, toggleTodo };
+  //마감기한 수정
+  const editTodo = (id, newDeadline) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, deadline: newDeadline } : todo
+      )
+    );
+  };
+
+  return { todos, addTodo, resetTodos, deleteTodo, toggleTodo, editTodo };
 }
