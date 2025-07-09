@@ -15,7 +15,7 @@ export default function TodoList({ todos, onToggle, onDelete, onEdit }) {
     if (bHasDeadline) return 1; //b만 기한 있음 -> b가 앞
 
     //둘 다 기한 없음 -> 최근에 등록된 게 위로
-    return a.id - b.id;
+    return b.id - a.id;
   });
 
   return (
