@@ -1,8 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { getItem, setItem } from "../storage";
 
 export function useTodos(initState) {
-  const [todos, setTodos] = useState(initState);
-  const nextId = useRef(initState.length + 1);
+  const [todos, setTodos] = useState(() => {
+    return getItem("todos", initState);
+  });
+  const nextId = useRef(todos.length + 1);
+
+  //변경될 때마다 저장
+  useEffect(() => {
+    setItem("todos", todos);
+  }, [todos]);
 
   //추가
   const addTodo = (text, deadline) => {
