@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { getItem, setItem } from "../storage";
+import { getItem, setItem } from "../utils/storage";
 
 export function useTodos(initState) {
   const [todos, setTodos] = useState(() => {
