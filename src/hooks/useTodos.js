@@ -7,7 +7,7 @@ export function useTodos(initState) {
   });
   const nextId = useRef(todos.length + 1);
 
-  //변경될 때마다 저장
+  //변경될 때마다 스토리지에 저장
   useEffect(() => {
     setItem("todos", todos);
   }, [todos]);

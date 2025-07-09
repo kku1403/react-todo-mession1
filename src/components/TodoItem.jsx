@@ -7,8 +7,13 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   const [tempDeadline, setTempDeadline] = useState(todo.deadline || "");
 
   return (
-    <li className={`todo-item ${todo.checked ? "todo-completed" : ""}`}>
-      <div className="todo-left">
+    <li
+      className={`flex items-center justify-between px-3 py-2 border-b border-gray-300 ${
+        todo.checked ? "line-through text-gray-500" : ""
+      }`}
+    >
+      <div className="flex items-center gap-3 flex-1">
+        {" "}
         {/** 완료 여부 표시 */}
         <input
           type="checkbox"
@@ -16,20 +21,19 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           onChange={() => onToggle(todo.id)}
         ></input>
         {/** todo */}
-        <span className="todo-text">{todo.text}</span>
-
+        <span className="text-base text-gray-800"> {todo.text}</span>
         {/**마감 기한(수정 가능) */}
-        {isEditing ? ( //수정 중일 때
+        {isEditing ? (
+          //수정 중일 때
           <>
             <input
               type="date"
               value={tempDeadline}
-              onChange={
-                //상태바뀔 때마다 어떻게 할 건지 정의
-                (e) => setTempDeadline(e.target.value) //선택된 날짜 temp에 저장하여 바로 상태 변경되지 않도록
-              }
+              onChange={(e) => setTempDeadline(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
             />
             <button
+              className="ml-2 text-sm text-blue-600 hover:underline"
               onClick={() => {
                 onEdit(todo.id, tempDeadline);
                 setIsEditing(false);
@@ -37,22 +41,32 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
             >
               저장
             </button>
-            <button onClick={() => setIsEditing(false)}>취소</button>
+            <button
+              className="ml-1 text-sm text-gray-600 hover:underline" // tailwind 추가
+              onClick={() => setIsEditing(false)}
+            >
+              취소
+            </button>
           </>
         ) : (
           //수정 중 아닐 때
           <span
-            className="todo-deadline"
-            onClick={() => setIsEditing(true)} //날짜 클릭하면 수정모드로 변환
-            style={{ cursor: "pointer", marginLeft: "8px", color: "#555" }}
+            className="text-sm text-gray-600 ml-3 cursor-pointer hover:underline"
+            onClick={() => setIsEditing(true)}
             title="클릭하면 수정 가능"
           >
-            {todo.deadline || "마감기한 없음"}
+            {todo.deadline || "기한 없음"}
           </span>
         )}
       </div>
+
       {/** 삭제 */}
-      <button onClick={() => onDelete(todo.id)}>삭제</button>
+      <button
+        className="text-sm text-red-500 hover:underline ml-4"
+        onClick={() => onDelete(todo.id)}
+      >
+        삭제
+      </button>
     </li>
   );
 }

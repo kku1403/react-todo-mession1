@@ -2,7 +2,6 @@ import AddTodo from "./components/AddTodo";
 import ResetTodos from "./components/ResetTodos";
 import TodoList from "./components/TodoList";
 import { useTodos } from "./hooks/useTodos";
-import "./App.css";
 
 function App() {
   //초기 상태
@@ -26,17 +25,21 @@ function App() {
 
   return (
     <>
-      {/** 등록 */}
-      <AddTodo onAdd={addTodo}></AddTodo>
+      <div className="pt-24 w-[1000px] mx-auto">
+        {/** 등록 */}
+        <AddTodo onAdd={addTodo}></AddTodo>
 
-      {/** 리셋 */}
-      <ResetTodos onReset={resetTodos}></ResetTodos>
+        {/** 리셋 */}
+        <ResetTodos onReset={resetTodos}></ResetTodos>
+      </div>
 
       {/**조회 (삭제, 수정)*/}
-      <div className="todo-container">
+      <div className="flex gap-6 p-5 box-border w-[1000px] mx-auto">
         {/**진행 중 */}
-        <section className="todo-section">
-          <h2>진행</h2>
+        <section className="flex-1 bg-gray-100 rounded-xl p-5 shadow max-h-[80vh] overflow-y-auto">
+          <h2 className="mt-0 font-bold text-2xl text-[#333] border-b-2 border-[#5b9bd5] pb-2">
+            진행
+          </h2>
           <TodoList
             todos={undoneTodos}
             onToggle={toggleTodo}
@@ -44,10 +47,11 @@ function App() {
             onEdit={editTodo}
           />
         </section>
-
         {/**완료됨 */}
-        <section className="todo-section">
-          <h2>완료</h2>
+        <section className="flex-1 bg-gray-100 rounded-xl p-5 shadow max-h-[80vh] overflow-y-auto">
+          <h2 className="mt-0 font-bold text-2xl text-[#333] border-b-2 border-[#5b9bd5] pb-2">
+            완료
+          </h2>
           <TodoList
             todos={doneTodos}
             onToggle={toggleTodo}
