@@ -1,72 +1,79 @@
-# Todo
+# ✅ React TodoApp
 
-![Todo 이미지](image.png)
+<img src="./TodoApp.gif" alt="TodoApp Demo" width="600" />
 
-## 주요 기능
+# 📁 주요 기능 요약
 
-- 등록 (+ 마감기한)
-- 목록 초기화
-- 삭제
-- 완료 체크
-- 목록 분류 (진행 or 완료)
-- 목록 정렬
-- 마감기한 수정
-- local storage에 저장
+- **할 일 등록**: 텍스트와 마감기한을 함께 입력
+- **목록 초기화**: 전체 항목 삭제 및 ID 초기화
+- **할 일 삭제**: 항목 개별 삭제
+- **완료 체크**: 체크박스를 통한 완료 여부 표시
+- **목록 분류**: 진행 중 / 완료 항목 분리
+- **정렬**: 마감기한 기준 오름차순 정렬
+- **마감기한 수정**: 날짜 직접 편집 가능
+- **Local Storage 저장**: 새로고침 후에도 데이터 유지
 
 ---
 
-## 폴더 구조
+# 🗂️ 폴더 구조 설명
 
-```bash
+```
 src/
-├─ components/
-│  ├─ AddTodo.jsx        # 새로운 할 일 등록 입력 폼 컴포넌트
-│  ├─ ResetTodos.jsx     # 전체 초기화 버튼 컴포넌트
-│  ├─ TodoItem.jsx       # 개별 할 일 항목 컴포넌트 (삭제, 체크 기능 포함)
-│  └─ TodoList.jsx       # 할 일 목록을 렌더링하는 컴포넌트
+├─ components/            # 재사용 가능한 UI 컴포넌트들 모음
+│  ├─ AddTodo.jsx        # 새 할 일 입력 폼 (텍스트 + 마감일 입력)
+│  ├─ ResetTodos.jsx     # 전체 목록 초기화 버튼 컴포넌트
+│  ├─ TodoItem.jsx       # 단일 할 일 렌더링 (삭제, 체크, 수정 포함)
+│  └─ TodoList.jsx       # 할 일 배열을 받아 목록 렌더링
 ├─ hooks/
-│  └─ useTodos.js        # 상태 관리 및 할 일 추가/삭제/수정/리셋 기능을 포함한 커스텀 훅
+│  └─ useTodos.js        # 상태 관리 커스텀 훅 (등록, 삭제, 수정 등)
 ├─ utils/
-│  └─ storage.js         # 로컬 스토리지 저장/불러오기 관련 유틸 함수
-├─ App.jsx               # 전체 앱 루트 컴포넌트, 훅과 컴포넌트 연결 담당
+│  └─ storage.js         # 로컬 스토리지 유틸 함수 모음
+├─ App.jsx               # 애플리케이션 루트, 훅과 컴포넌트 연결
 ```
 
-## 커스텀 훅(useTodos)
+---
 
-- **todos (state)** : 할 일 객체 배열( `{id, text, checked, deadline}` )
-- **nextId (ref)** : 다음에 추가할 할 일의 고유 ID를 관리
-- **addTodo (text, deadline)** : 새로운 할 일 등록
-- **resetTodos ()** : 초기 상태로 리셋
-- **deleteTodo (id)** : 특정 할 일 삭제
-- **toggleTodo (id)** : 완료 여부 토글
-- \*\*editTodo (id)
+# 🔧 커스텀 훅: `useTodos` 구조 분석
+
+| 이름         | 타입  | 설명                                  |
+| ------------ | ----- | ------------------------------------- |
+| `todos`      | state | 현재 할 일 목록 상태 배열 (객체 형태) |
+| `nextId`     | ref   | 다음 할 일의 고유 ID 값을 저장        |
+| `addTodo`    | 함수  | 새 할 일을 todos에 추가               |
+| `resetTodos` | 함수  | 전체 초기화, todos 및 nextId 리셋     |
+| `deleteTodo` | 함수  | 특정 ID 항목 제거                     |
+| `toggleTodo` | 함수  | 완료 상태 토글 (checked 필드 반전)    |
+| `editTodo`   | 함수  | 마감기한 수정                         |
 
 ---
 
-# 문제 해결 과정
+# 🛠️ 기능별 상세 분석 및 구현 로직
 
-## 할 일 등록
+## ✍️ 할 일 등록
 
 ### 기능 설명
 
-- 새로운 할 일을 등록
-- 마감 기한 입력 가능
+- 사용자가 텍스트 입력받아 새로운 할 일 등록
+- 마감기한 입력 가능
 
 ### 변수 설명
 
-| 변수 이름  | 타입       | 설명                                                                      |
-| ---------- | ---------- | ------------------------------------------------------------------------- |
-| `onAdd`    | `function` | `AddTodo` 컴포넌트에 전달된 콜백 함수 `addTodo`. 등록 버튼 클릭 시 호출됨 |
-| `text`     | `string`   | 사용자가 입력한 할 일 내용                                                |
-| `deadline` | `string`   | 사용자가 선택한 마감 기한 (YYYY-MM-DD 형식)                               |
-| `newTodo`  | `object`   | 새로 생성된 할 일 객체 (`id`, `text`, `checked`, `deadline` 포함)         |
+| 이름       | 타입     | 설명                                        |
+| ---------- | -------- | ------------------------------------------- |
+| `text`     | string   | 할 일 텍스트 입력값                         |
+| `deadline` | string   | 마감기한 (YYYY-MM-DD)                       |
+| `onAdd`    | function | addTodo 실행 함수                           |
+| `newTodo`  | object   | 생성될 `{id, text, checked, deadline}` 객체 |
 
-### 로직 설명
+### 로직 흐름
 
-- AddTodo 컴포넌트의 form에서 onSubmit 이벤트 발생
-- 사용자가 입력한 텍스트와 날짜 값을 추출
-- `onAdd` 호출 해 새로운 할 일 객체 추가 및 상태 업데이트
-- 입력 폼 초기화
+1. form 제출 이벤트 발생
+2. text와 deadline 추출
+3. addTodo 함수 호출 → todos 상태에 새 객체 추가
+4. 입력 필드 초기화 처리
+
+<details>
+<summary>🔍 AddTodo 컴포넌트 코드</summary>
 
 ```js
 //AddTodo 컴포넌트
@@ -97,6 +104,10 @@ export default function AddTodo({ onAdd }) {
 }
 ```
 
+</details>
+<details>
+<summary>🔍 addTodo 함수 코드</summary>
+
 ```js
 //커스텀 훅 내부 추가 로직
 const addTodo = (text, deadline) => {
@@ -114,25 +125,29 @@ const addTodo = (text, deadline) => {
 };
 ```
 
+</details>
+
 ---
 
-## 초기화
+## 🔄 전체 목록 초기화
 
 ### 기능 설명
 
-- 초기화 하기 전 한 번 더 확인
-- 목록을 초기 상태로
+- 전체 할 일을 삭제하고 초기 상태로 되돌리는 기능 (confirm 확인 포함)
 
 ### 변수 설명
 
-| 변수 이름 | 타입       | 설명                                                                             |
-| --------- | ---------- | -------------------------------------------------------------------------------- |
-| `onReset` | `function` | `ResetTodos` 컴포넌트에 전달된 콜백 함수 `resetTodos`. 초기화 버튼 누르면 호출됨 |
+| 이름      | 타입     | 설명                 |
+| --------- | -------- | -------------------- |
+| `onReset` | function | resetTodos 실행 함수 |
 
-### 로직 설명
+### 로직 흐름
 
-- 클릭 시 confirm()으로 한 번 더 확인(실수 방지)
-- todos 상태 초기화 + ID 초기화
+1. `confirm()` 으로 사용자 의사 확인
+2. true일 경우 상태를 초기 상태로 되돌림
+
+<details>
+<summary>🔍 ResetTodos 컴포넌트 코드</summary>
 
 ```js
 //ResetTodos 컴포넌트
@@ -140,6 +155,11 @@ export default function ResetTodos({ onReset }) {
   return <button onClick={onReset}>리셋</button>; //클릭하면 resetTodos 함수 호출
 }
 ```
+
+</details>
+
+<details>
+<summary>🔍 resetTodos 함수 코드</summary>
 
 ```js
 //커스텀 훅 내부 리셋 로직
@@ -153,24 +173,29 @@ const resetTodos = () => {
 };
 ```
 
+</details>
+
 ---
 
-## 할 일 삭제
+## ❌ 할 일 삭제
 
 ### 기능 설명
 
-- 특정 할 일 삭제
+- 특정 ID에 해당하는 항목을 목록에서 제거
 
 ### 변수 설명
 
-| 변수 이름 | 타입     | 설명                |
-| --------- | -------- | ------------------- |
-| `id`      | `number` | 지울 항목의 고유 id |
+| 이름 | 타입   | 설명                     |
+| ---- | ------ | ------------------------ |
+| `id` | number | 삭제 대상 항목의 고유 ID |
 
-### 로직 설명
+### 로직 흐름
 
-- 버튼이 눌린 항목의 id를 비교
-- 삭제하려는 항목 제외하고 새로운 todos 구성 및 업데이트
+1. 버튼이 눌린 항목의 id를 비교
+2. 삭제하려는 항목 제외하고 새로운 todos 구성 및 업데이트
+
+<details>
+<summary>🔍 deleteTodo 함수 코드</summary>
 
 ```js
 //커스텀 훅 내부 삭제 로직
@@ -179,9 +204,11 @@ const deleteTodo = (id) => {
 };
 ```
 
+</details>
+
 ---
 
-## 할 일 체크
+## ✔️ 완료 체크
 
 ### 기능 설명
 
@@ -189,14 +216,17 @@ const deleteTodo = (id) => {
 
 ### 변수 설명
 
-| 변수 이름 | 타입     | 설명                  |
-| --------- | -------- | --------------------- |
-| `id`      | `number` | 토글한 항목의 고유 id |
+| 이름 | 타입   | 설명                    |
+| ---- | ------ | ----------------------- |
+| `id` | number | 상태를 반전시킬 항목 ID |
 
-### 로직 설명
+### 로직 흐름
 
-- 해당 항목의 id를 비교
-- id 비교를 통해 checked 토글하여 새로운 todos 구성 및 업데이트
+1. 해당 항목의 id를 비교
+2. id 비교를 통해 checked 토글하여 새로운 todos 구성 및 업데이트
+
+<details>
+<summary>🔍 toggleTodo 함수 코드</summary>
 
 ```js
 //커스텀 훅 내부 토글 로직
@@ -209,26 +239,31 @@ const toggleTodo = (id) => {
 };
 ```
 
+</details>
+
 ---
 
-## 목록 분류 (진행/ 완료)
+## 🗂️ 목록 분류: 진행 / 완료
 
 ### 기능 설명
 
-- 목록을 분리하여 표시
+- 완료 여부(`checked`)에 따라 두 개의 리스트로 분리하여 렌더링
 
 ### 변수 설명
 
-| 변수 이름     | 타입    | 설명                                |
-| ------------- | ------- | ----------------------------------- |
-| `undoneTodos` | `Array` | 체크되지 않은(진행 중인) 할 일 목록 |
-| `doneTodos`   | `Array` | 체크된(완료된) 할 일 목록           |
+| 이름          | 타입  | 설명                  |
+| ------------- | ----- | --------------------- |
+| `undoneTodos` | Array | 진행 중인 항목 리스트 |
+| `doneTodos`   | Array | 완료된 항목 리스트    |
 
-### 로직 설명
+### 로직 흐름
 
-- App내에서 todos 배열을 checked 여부에 따라 두 그룹으로 분리
-- App에서 목록 리턴할 때, 2개로 나뉜 리스트를 따로 보여주기
-  - 어차피 TodoList에 보여줄 목록을 넘겨주기 때문에 가능
+1. App내에서 todos 배열을 checked 여부에 따라 두 그룹으로 분리
+2. App에서 목록 리턴할 때, 2개로 나뉜 리스트를 따로 보여주기
+   - 어차피 TodoList에 보여줄 목록을 넘겨주기 때문에 가능
+
+<details>
+<summary>🔍 App 컴포넌트 코드</summary>
 
 ```js
 //App.jsx에서 진행 중인 일, 완료된 일로 나누기
@@ -265,9 +300,11 @@ return (
 );
 ```
 
+</details>
+
 ---
 
-## 목록 정렬
+## 📅 마감순 정렬
 
 ### 기능 설명
 
@@ -275,19 +312,23 @@ return (
 
 ### 변수 설명
 
-| 변수 이름      | 타입      | 설명                                  |
-| -------------- | --------- | ------------------------------------- |
-| `sortedTodos`  | `Array`   | 정렬된 할 일 목록                     |
-| `aHasDeadline` | `Boolean` | 비교 대상 a에 마감 기한이 있는지 여부 |
-| `bHasDeadline` | `Boolean` | 비교 대상 b에 마감 기한이 있는지 여부 |
+| 이름           | 타입    | 설명                        |
+| -------------- | ------- | --------------------------- |
+| `sortedTodos`  | Array   | 정렬된 할 일 배열           |
+| `aHasDeadline` | Boolean | 항목 A의 마감기한 존재 여부 |
+| `bHasDeadline` | Boolean | 항목 B의 마감기한 존재 여부 |
 
-### 로직 설명
+### 로직 흐름
 
-- deadline이 있는 항목을 우선 표시
-- 마감일이 빠를수록 위에 표시
-- 마감일이 없는 항목을 등록 순서대로 유지
+1. 기한이 있는 항목을 우선 표시
+2. 마감일이 빠를수록 위에 표시
+3. 마감일이 없는 항목은 등록 순서대로 유지
+
+<details>
+<summary>🔍 TodoList 컴포넌트 코드</summary>
 
 ```js
+//TodoList 컴포넌트
 export default function TodoList({ todos, onToggle, onDelete, onEdit }) {
   const sortedTodos = [...todos].sort((a, b) => {
     //기한 있는지 확인
@@ -325,9 +366,11 @@ export default function TodoList({ todos, onToggle, onDelete, onEdit }) {
 }
 ```
 
+</details>
+
 ---
 
-## 마감기한 수정
+## ✏️ 마감기한 수정
 
 ### 기능 설명
 
@@ -335,20 +378,23 @@ export default function TodoList({ todos, onToggle, onDelete, onEdit }) {
 
 ### 변수 설명
 
-| 변수명        | 타입       | 설명                                               |
-| ------------- | ---------- | -------------------------------------------------- |
-| `todo`        | `Object`   | 할 일 항목 정보 (`id`, `deadline` 포함)            |
-| `newDeadline` | `string`   | 새로운 마감기한                                    |
-| `onEdit`      | `function` | `TodoItem` 컴포넌트에 전달된 콜백 함수 `editTodo`. |
+| 이름          | 타입     | 설명                        |
+| ------------- | -------- | --------------------------- |
+| `todo`        | object   | 수정 대상 항목              |
+| `newDeadline` | string   | 사용자가 입력한 새로운 날짜 |
+| `onEdit`      | function | editTodo 실행 함수          |
 
-### 로직 설명
+### 로직 흐름
 
-- 목록에서 마감기한 클릭시 수정 가능 (isEditing = true)
-- 수정 모드에서는 date 입력창과, 저장, 취소 버튼이 나타남
-- 날짜를 선택하고 저장을 누르면 새로운 마감기한으로 업데이트
-- 취소를 누르면 기존 마감기한으로 유지
+1. 날짜 클릭 → 수정 모드로 전환
+2. 저장 클릭 시 editTodo 호출 → 상태 업데이트
+3. 취소 클릭 시 수정 모드 종료
+
+<details>
+<summary>🔍 TodoItem 컴포넌트 코드</summary>
 
 ```js
+//TodoItem 컴포넌트
 export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 
   //기한을 수정 중인지에 따라 UI 달라짐 -> 상태로 표현
@@ -402,6 +448,11 @@ export default function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 }
 ```
 
+</details>
+
+<details>
+<summary>🔍 editTodo 함수 코드</summary>
+
 ```js
 //커스텀 훅 내부 수정 로직
 const editTodo = (id, newDeadline) => {
@@ -413,54 +464,85 @@ const editTodo = (id, newDeadline) => {
 };
 ```
 
----
+## </details>
 
-## 로컬 스토리지에 저장
+## 💾 로컬 스토리지 연동
 
----
+### 기능 설명
 
-# 새로 알게 된 내용
+- 사용자의 todos 상태를 브라우저 로컬 스토리지에 저장해 새로고침해도 유지
 
-### 1. 클로저
+### 변수 설명
 
-❓ 훅 내부 함수들은 어떻게 최신 상태의 값을 가져올까?
+| 이름        | 타입     | 설명                                                          |
+| ----------- | -------- | ------------------------------------------------------------- |
+| `initState` | Array    | 초기 할 일 목록, 로컬 스토리지에 값이 없을 때 기본값으로 사용 |
+| `getItem`   | function | 저장된 todos 불러오기                                         |
+| `setItem`   | function | 변경된 todos 저장하기                                         |
 
-- `todos`는 `addTodo`함수의 인자로 주어지지 않음
-- JS의 클로저 개념으로 인해 `useTodos` 훅 내부에서 `addTodo` 함수가 선언될 때, `todos`가 존재하는 상위 스코프(외부 영역)를 기억함.
-- 덕분에 props로 todos를 내려보낼 필요없이 내부에서 상태 접근 가능
+### 로직 흐름
 
-❓ 선언될 때의 todos를 기억하는 거면 todos가 업데이트 되고 난 후에는 어떻게 기억할 수 있는 걸까? (왜 함수 내부 상태 참조는 항상 최신일까)
+1. useTodos 초기 상태를 `getItem()`으로 설정
+   - todos가 이미 존재한다면 존재하는 값으로, 없다면 initState로
+2. useEffect로 todos가 바뀔 때마다 `setItem()` 실행
 
-- `useTodos`가 포함된 컴포넌트가 리렌더링 되면 `useTodos` 함수가 다시 실행됨
-- 즉 useTodos 내부에 정의된 함수들이 새로 만들어짐
-- 이 과정에서 각 함수들은 항상 최신 상태를 참조하게 되는 것
-
-📝요약
-
-1. 상태 변경
-2. 컴포넌트 다시 실행
-3. useTodos 다시 실행
-4. useTodos 내부 함수들 새로 정의
-5. 결국엔 항상 최신 상태를 참조하게 됨
-
-### 2. 함수 호출 X -> 함수 전달
-
-❓`onChange={onToggle(todo.id)}` 이렇게 쓰면 안되는 이유
+<details>
+<summary>🔍 useTodos 커스텀 훅 코드</summary>
 
 ```js
-onChange={onToggle(todo.id)} // 즉시 호출됨
-onChange={() => onToggle(todo.id)} // 함수 전달
+//커스텀 훅
+export function useTodos(initState) {
+
+  //값이 있다면 가져오고 없다면 initState로 초기 설정
+  const [todos, setTodos] = useState(() => {
+    return getItem("todos", initState);
+  });
+  const nextId = useRef(todos.length + 1);
+
+  //변경될 때마다 스토리지에 저장
+  useEffect(() => {
+    setItem("todos", todos);
+  }, [todos]);
+
+  // 생략된 로직
+  ...
+}
 ```
 
-- 1번의 경우 컴포넌트가 렌더링 되는 순간에 `onToggle(todo.id)`가 즉시 실행됨
+</details>
 
-  - 해당 이벤트가 아니라 다른 이벤트로 리렌더링 되더라도 호출될 수 있음
+<details>
+<summary>🔍 로컬 스토리 코드</summary>
 
-- 2번처럼 해야 실제 이벤트 발생 시 함수가 호출 됨
+```js
+//storage.js
+const storage = window.localStorage;
 
-### 3. `<li>`가 아닌 `<TodoItem>`에서 key값을 줘야 하는 이유
+export const setItem = (key, value) => {
+  try {
+    storage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error("Storage set srror : ", e);
+  }
+};
 
-- React는 리스트 렌더링 시 key값을 이용해 각 컴포넌트를 식별하고, 효율적으로 업데이트함
+export const getItem = (key, defaultValue) => {
+  try {
+    const storedValue = storage.getItem(key);
+    if (storedValue) {
+      //todos가 이미 존재하면 있는 거 반환
+      return JSON.parse(storedValue);
+    }
 
-- key는 React가 직접 렌더링하는 컴포넌트의 **최상위 요소**에 붙여야 함
-  - 현재 코드에서 최상위 태크는 <li>가 아닌 <TodoItem>이므로 여기다 붙여야 함
+    setItem(key, defaultValue); //아니면 초기값으로 설정 후 반환
+    return defaultValue;
+  } catch (e) {
+    console.error("Storage get error : ", e);
+    return defaultValue;
+  }
+};
+```
+
+</details>
+
+---
